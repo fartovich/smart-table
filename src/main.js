@@ -44,10 +44,11 @@ async function render(action) {
   // result = applySearching(result, state, action);
   // result = applyFiltering(result, state, action);
   // result = applySorting(result, state, action);
-  // result = applyPagination(result, state, action);
+  query = applyPagination(query, state, action); // обновляем query
 
-  const { total, items } = await api.getRecords(query);
+  const { total, items } = await api.getRecords(query); // запрашиваем данные с собранными параметрами
 
+  updatePagination(total, query); // перерисовываем пагинатор
   sampleTable.render(items);
 }
 
@@ -73,7 +74,7 @@ const applySorting = initSorting([
   sampleTable.header.elements.sortByTotal,
 ]);
 
-const applyPagination = initPagination(
+const { applyPagination, updatePagination } = initPagination(
   sampleTable.pagination.elements,
   (el, page, isCurrent) => {
     const input = el.querySelector("input");
