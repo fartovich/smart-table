@@ -42,7 +42,7 @@ async function render(action) {
   let query = {}; // параметры запроса к серверу
   // @todo: использование
   // result = applySearching(result, state, action);
-  // result = applyFiltering(result, state, action);
+  query = applyFiltering(query, state, action); // result заменяем на query
   // result = applySorting(result, state, action);
   query = applyPagination(query, state, action); // обновляем query
 
@@ -65,9 +65,9 @@ const sampleTable = initTable(
 // @todo: инициализация
 const applySearching = initSearching("search");
 
-// const applyFiltering = initFiltering(sampleTable.filter.elements, {
-//  searchBySeller: indexes.sellers,
-// });
+const { applyFiltering, updateIndexes } = initFiltering(
+  sampleTable.filter.elements,
+);
 
 const applySorting = initSorting([
   sampleTable.header.elements.sortByDate,
@@ -91,6 +91,10 @@ appRoot.appendChild(sampleTable.container);
 
 async function init() {
   const indexes = await api.getIndexes();
+
+  updateIndexes(sampleTable.filter.elements, {
+    searchBySeller: indexes.sellers,
+  });
 }
 
 init().then(render);
